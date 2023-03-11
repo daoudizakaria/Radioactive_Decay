@@ -6,11 +6,12 @@ import matplotlib.pyplot as plt
 df = pd.read_csv('nuclides.csv')
 
 
-print(" " * 40,"-------------------------------------")
-print(" " * 40,"|         Zakaria Daoudi            |")
-print(" " * 40,"|   List of Radioactive Nuclides    |")
-print(" " * 40,"-------------------------------------\n")
+print(" " * 40,"----------------------------------------")
+print(" " * 40,"|           Zakaria Daoudi              |")
+print(" " * 40,"|   Radioactivity and Nuclear Physics   |")
+print(" " * 40,"----------------------------------------\n")
 
+print("List of Radioactive Nuclides")
 print("key",df)  
 
 while True :
