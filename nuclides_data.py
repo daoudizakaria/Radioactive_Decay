@@ -1,3 +1,5 @@
+# nuclides_data.py
+
 nuclides = {
     "130Ba": {
         "name": "Barium 130",
@@ -114,30 +116,29 @@ nuclides = {
         "half_life": 2.00e19,
         "ideal_daughter": None
     },
-    # Ideal decay chain examples:
     "238U": {
         "name": "Uranium 238",
-        "half_life": 4.468e9,
+        "half_life": 4.468e9,  # years
         "ideal_daughter": "234Th",
-        "daughter_half_life": 0.066,  # years
+        "daughter_half_life": 6.6e-2,  # 0.066 years ~ 24 days
         "suggested_N0": 1_000_000,
         "suggested_steps": 5000,
         "suggested_time_multiplier": 5
     },
     "235U": {
         "name": "Uranium 235",
-        "half_life": 7.04e8,
+        "half_life": 7.04e8,  # years
         "ideal_daughter": "231Pa",
-        "daughter_half_life": 0.0013,  # years
+        "daughter_half_life": 0.0013,  # years (~ 11 hours)
         "suggested_N0": 1_000_000,
         "suggested_steps": 5000,
         "suggested_time_multiplier": 5
     },
     "232Th": {
         "name": "Thorium 232",
-        "half_life": 1.405e10,
+        "half_life": 1.405e10,  # years
         "ideal_daughter": "228Ra",
-        "daughter_half_life": 5.75,  # years
+        "daughter_half_life": 5.75,   # years
         "suggested_N0": 1_000_000,
         "suggested_steps": 5000,
         "suggested_time_multiplier": 5
