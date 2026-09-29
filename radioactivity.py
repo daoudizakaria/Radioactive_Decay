@@ -1,66 +1,86 @@
-import pandas as pd
-import numpy as np
+"""
+Radioactive decay of a single nuclide: the simple program.
+
+    python3 radioactivity.py
+
+The decay law dN/dt = -N / tau, with tau = T_1/2 / ln 2, is solved with Euler's method for a
+nuclide chosen from nuclides.csv and compared with the exact solution N(t) = N0 exp(-t / tau).
+"""
 import math
+
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 
-df = pd.read_csv('nuclides.csv')
+DEFAULT_STEPS = 100000
 
 
-print(" " * 40,"----------------------------------------")
-print(" " * 40,"|           Zakaria Daoudi              |")
-print(" " * 40,"|   Radioactivity and Nuclear Physics   |")
-print(" " * 40,"----------------------------------------\n")
+def ask_number(prompt, cast, minimum, maximum=None):
+    """Ask again until the answer is a valid number in the allowed range."""
+    while True:
+        answer = input(prompt).strip()
+        try:
+            value = cast(answer)
+        except ValueError:
+            print("Please enter a number.")
+            continue
+        if value < minimum or (maximum is not None and value > maximum):
+            print("This value is out of range.")
+        else:
+            return value
 
-print("List of Radioactive Nuclides")
-print("key",df)  
 
-while True :
- j = input("Choose a key of an element : ")
- choice = int(j)
- c = df.loc[choice].at["Nuclide Name"]
+def euler_decay(N0, half_life, total_time, steps):
+    """Euler's method for dN/dt = -N / tau. Returns the times, N (Euler) and N (exact)."""
+    tau = half_life / math.log(2)
+    dt = total_time / steps
+    t = dt * np.arange(steps + 1)
+    N = np.zeros(steps + 1)
+    N[0] = N0
+    for i in range(steps):
+        N[i + 1] = N[i] - dt * N[i] / tau
+    return t, N, N0 * np.exp(-t / tau)
 
- print("=" * 30)
- print("You chose : ",c)
- matrix_res = df.to_numpy()
 
- t_halflife = matrix_res[choice,2]
- print(f"The half-time of {c} is {t_halflife} years.")
+def main():
+    df = pd.read_csv("nuclides.csv")
+    print("Radioactive decay of a single nuclide")
+    print("=" * 37)
+    print("\nList of radioactive nuclides")
+    print(df)
 
- print("--"*8)
- print("With how many nuclides your simulation start ?")
- y = input()
- N0= int(y)
+    while True:
+        choice = ask_number("\nChoose the key of a nuclide (or -1 to quit): ", int, -1, len(df) - 1)
+        if choice == -1:
+            break
+        name = df.loc[choice, "Nuclide Name"]
+        half_life = float(df.loc[choice, "Half-life (years)"])
+        print("=" * 30)
+        print(f"You chose {name}. Its half-life is {half_life:.4g} years.")
 
- print("--"*4)
- print("The length of the arrays are 100000 by default. Do you want to change it ? [yes/no]")
- a = str(input())
- proceed='yes' or 'YES' or 'Yes'
- not_proceed='no' or 'NO' or 'No'
- if a == proceed :
-    print("What is the new length ?")
-    L1 = input()
- elif a == not_proceed :
-    L1 = 100000  
+        N0 = ask_number("Initial number of nuclei: ", int, 1)
+        answer = input(f"The number of time steps is {DEFAULT_STEPS} by default. Change it? [yes/no] ")
+        if answer.strip().lower() in ("yes", "y"):
+            steps = ask_number("New number of steps: ", int, 1)
+        else:
+            steps = DEFAULT_STEPS
+        total_time = ask_number(f"Duration of the simulation in years (try {5 * half_life:.3g}, "
+                                "i.e. 5 half-lives): ", float, 1e-300)
 
- print("--"*4)    
- print("Over how many years the simulation will be done ?")
- dt1 = input()    
+        t, N, N_exact = euler_decay(N0, half_life, total_time, steps)
+        print(f"After {total_time:.4g} years: N = {N[-1]:.6g} (Euler) and {N_exact[-1]:.6g} (exact).")
 
- print("--"*4)     
- tau= t_halflife / math.log(2)
- L=int(L1)
- dt=int(dt1)/L
- N = [0]*(L+1)
- t = [0]*(L+1)
- N[0]=N0
- t[0]=0.0
- for i in range(L) :
-  N[i+1]=N[i]-(dt*N[i])/tau
-  t[i+1]=i*dt
-  print(i,N[i],t[i])
- 
- plt.xlabel('Time (years)')
- plt.ylabel('Number of Nuclides')
- plt.grid(visible=True, which='major', axis='both')
- plt.plot(t, N, linewidth=1.5)
- plt.show()
+        plt.plot(t, N, linewidth=1.5, label="Euler's method")
+        plt.plot(t, N_exact, "--", linewidth=1.5, label="Exact solution")
+        plt.axhline(N0 / 2, color="gray", linewidth=0.8)
+        plt.axvline(half_life, color="gray", linewidth=0.8)
+        plt.xlabel("Time (years)")
+        plt.ylabel("Number of nuclei")
+        plt.title(f"Decay of {name}")
+        plt.grid(visible=True)
+        plt.legend()
+        plt.show()
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+# files written by the "export" option of nuclear.py
+single_decay_simulation.csv
+simple_decay_chain.csv
+complex_decay_chain.csv
+.ipynb_checkpoints/
+monte_carlo_decay.csv
+# LaTeX build files
+*.aux
+*.log
+*.toc
+*.out
+*.fls
+*.fdb_latexmk
